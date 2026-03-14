@@ -75,10 +75,7 @@ namespace Automatization
             DisableAutomation();
             _ = GameCheckAsync();
 
-            PauseHotkeysCheckBox.IsChecked = GlobalHotKeyManager.IsPaused;
-            PauseHotkeysCheckBox.IsEnabled = true;
-
-            InitializeNotifyIcon();
+InitializeNotifyIcon();
         }
 
         private void OnSourceInitialized(object? sender, EventArgs e)
@@ -641,18 +638,7 @@ namespace Automatization
             RegisterHotkeysFromSettings();
         }
 
-        private void PauseHotkeysCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            GlobalHotKeyManager.IsPaused = true;
-            LogService.LogInfo("Hotkeys paused by checkbox.");
-        }
-
-        private void PauseHotkeysCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            GlobalHotKeyManager.IsPaused = false;
-            LogService.LogInfo("Hotkeys resumed by checkbox.");
-        }
-        #endregion
+#endregion
 
         #region Helpers
 

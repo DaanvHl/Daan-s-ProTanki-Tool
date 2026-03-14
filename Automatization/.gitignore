@@ -401,3 +401,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 Secrets/
+
+# Claude Code
+.claude/
