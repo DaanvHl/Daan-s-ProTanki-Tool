@@ -1,0 +1,199 @@
+<Window x:Class="Automatization.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Automatization.Controls"
+        Title="Settings" Height="720" Width="400" WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource WindowBackground}"
+        BorderThickness="1" BorderBrush="{DynamicResource Border}">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Click Speed (ms)" Margin="0,0,10,8" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Foreground}"/>
+                <TextBox x:Name="ClickSpeedTextBox" Height="30" Margin="0,0,10,8"
+                         Background="{DynamicResource TextBoxBackground}"
+                         Foreground="{DynamicResource TextBoxForeground}"
+                         BorderBrush="{DynamicResource TextBoxBorder}"/>
+
+                <TextBlock Text="Game Process Name (e.g., ProTanki)" Margin="0,15,10,8" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Foreground}" ToolTip="The executable name of the game process without the .exe extension."/>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" x:Name="GameProcessNameTextBox" Height="30" Margin="0,0,10,0"
+                             Background="{DynamicResource TextBoxBackground}"
+                             Foreground="{DynamicResource TextBoxForeground}"
+                             BorderBrush="{DynamicResource TextBoxBorder}"
+                             IsReadOnly="True"/>
+                    <Button Grid.Column="1" x:Name="UnlockGameProcessNameButton" Content="Unlock" Margin="0,0,10,0" Width="80"
+                            Click="UnlockGameProcessNameButton_Click"/>
+                </Grid>
+                <TextBlock Text="Game Executable Path (Optional)" Margin="0,15,0,8" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Foreground}"/>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" x:Name="GamePathTextBox" Height="30" IsReadOnly="True" Margin="0,0,10,0"
+                             Background="{DynamicResource TextBoxBackground}"
+                             Foreground="{DynamicResource TextBoxForeground}"
+                             BorderBrush="{DynamicResource TextBoxBorder}"/>
+                    <Button Grid.Column="1" Content="Browse" Margin="0,0,10,0" Width="80"
+                            Click="BrowseGamePathButton_Click"/>
+                </Grid>
+                <TextBlock Text="Clicker Coordinates" Margin="0,15,0,8" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Foreground}"/>
+
+                <!-- Red Team Coordinates -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Red Team:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{DynamicResource Foreground}"/>
+                    <TextBox Grid.Column="1" x:Name="RedTeamXTextBox" Margin="4,0,0,0" Background="{DynamicResource TextBoxBackground}" Foreground="{DynamicResource TextBoxForeground}" BorderBrush="{DynamicResource TextBoxBorder}" HorizontalAlignment="Left" Width="92"/>
+                    <TextBox Grid.Column="2" x:Name="RedTeamYTextBox" Margin="6,0,10,0" Background="{DynamicResource TextBoxBackground}" Foreground="{DynamicResource TextBoxForeground}" BorderBrush="{DynamicResource TextBoxBorder}"/>
+                    <Button Grid.Column="3" x:Name="PickRedTeamButton" Content="Pick" Margin="5,0,10,0" Width="60" Click="PickRedTeamButton_Click"/>
+                </Grid>
+
+                <!-- Blue Team Coordinates -->
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Blue Team:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{DynamicResource Foreground}"/>
+                    <TextBox Grid.Column="1" x:Name="BlueTeamXTextBox" Margin="0,0,2,0" Background="{DynamicResource TextBoxBackground}" Foreground="{DynamicResource TextBoxForeground}" BorderBrush="{DynamicResource TextBoxBorder}" HorizontalAlignment="Left" Width="92"/>
+                    <TextBox Grid.Column="2" x:Name="BlueTeamYTextBox" Margin="6,0,10,0" Background="{DynamicResource TextBoxBackground}" Foreground="{DynamicResource TextBoxForeground}" BorderBrush="{DynamicResource TextBoxBorder}"/>
+                    <Button Grid.Column="3" x:Name="PickBlueTeamButton" Content="Pick" Margin="5,0,10,0" Width="60" Click="PickBlueTeamButton_Click"/>
+                </Grid>
+
+
+                <TextBlock Text="Hotkeys" Margin="0,15,0,8" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Foreground}"/>
+
+                <Grid Margin="0,0,0,15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Global Toggle:" VerticalAlignment="Center" Margin="0,0,10,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <controls:HotKeyBox Grid.Row="0" Grid.Column="1" x:Name="GlobalHotKeyBox" Margin="0,0,10,8"
+                                        Background="{DynamicResource TextBoxBackground}"
+                                        Foreground="{DynamicResource TextBoxForeground}"
+                                        BorderBrush="{DynamicResource TextBoxBorder}"/>
+
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Red Team:" VerticalAlignment="Center" Margin="0,0,10,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <controls:HotKeyBox Grid.Row="1" Grid.Column="1" x:Name="RedTeamHotKeyBox" Margin="0,0,10,8"
+                                        Background="{DynamicResource TextBoxBackground}"
+                                        Foreground="{DynamicResource TextBoxForeground}"
+                                        BorderBrush="{DynamicResource TextBoxBorder}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Blue Team:" VerticalAlignment="Center" Margin="0,0,10,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <controls:HotKeyBox Grid.Row="2" Grid.Column="1" x:Name="BlueTeamHotKeyBox" Margin="0,0,10,8"
+                                        Background="{DynamicResource TextBoxBackground}"
+                                        Foreground="{DynamicResource TextBoxForeground}"
+                                        BorderBrush="{DynamicResource TextBoxBorder}"/>
+                    
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Gold Box Timer:" VerticalAlignment="Center" Margin="0,0,10,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <controls:HotKeyBox Grid.Row="3" Grid.Column="1" x:Name="GoldBoxTimerHotKeyBox" Margin="0,0,10,8"
+                                        Background="{DynamicResource TextBoxBackground}"
+                                        Foreground="{DynamicResource TextBoxForeground}"
+                                        BorderBrush="{DynamicResource TextBoxBorder}"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Railgun Mode:" VerticalAlignment="Center" Margin="0,0,10,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <controls:HotKeyBox Grid.Row="4" Grid.Column="1" x:Name="RailgunModeHotKeyBox" Margin="0,0,10,8"
+                                        Background="{DynamicResource TextBoxBackground}"
+                                        Foreground="{DynamicResource TextBoxForeground}"
+                                        BorderBrush="{DynamicResource TextBoxBorder}"/>
+
+                    <CheckBox Grid.Row="5" Grid.Column="1" x:Name="TransparentTimerWindowCheckBox" Content="Transparent Timer Window" Margin="0,0,10,8"
+                              VerticalAlignment="Center"
+                              Foreground="{DynamicResource Foreground}"/>
+                </Grid>
+
+                <TextBlock Text="Theme" Margin="0,15,0,8" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Foreground}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                    <RadioButton x:Name="DarkRadio" Content="Dark" Margin="0,0,10,0"
+                                 GroupName="Theme" Checked="ThemeRadio_Checked"
+                                 Foreground="{DynamicResource Foreground}"/>
+                    <RadioButton x:Name="LightRadio" Content="Light" GroupName="Theme"
+                                 Checked="ThemeRadio_Checked"
+                                 Foreground="{DynamicResource Foreground}"/>
+                </StackPanel>
+
+                <TextBlock Text="Updates" Margin="0,15,0,8" FontWeight="SemiBold"
+                           Foreground="{DynamicResource Foreground}"/>
+                <StackPanel Orientation="Vertical" Margin="0,0,0,15">
+                    <TextBlock x:Name="VersionTextBlock" Margin="0,0,0,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <TextBlock x:Name="LatestVersionTextBlock" Margin="0,0,0,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <TextBlock x:Name="StatusTextBlock" Margin="0,0,0,8"
+                               Foreground="{DynamicResource Foreground}"/>
+                    <Button x:Name="CheckForUpdatesButton" Content="Check for Updates" Width="140"
+                            Click="CheckForUpdatesButton_Click"
+                            Background="{DynamicResource ButtonBackground}"
+                            Foreground="{DynamicResource ButtonForeground}"
+                            BorderBrush="{DynamicResource ButtonBorder}"/>
+                    <Button x:Name="UpdateNowButton" Content="Update Now" Width="140" Margin="0,5,0,0"
+                            Click="UpdateNowButton_Click"
+                            Visibility="Collapsed"
+                            Background="{DynamicResource ButtonBackground}"
+                            Foreground="{DynamicResource ButtonForeground}"
+                            BorderBrush="{DynamicResource ButtonBorder}"/>
+                    <ProgressBar x:Name="DownloadProgressBar" Height="10" Margin="0,5,0,0"
+                                 Visibility="Collapsed"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button x:Name="SaveButton" Content="Save" Width="80" Margin="0,0,10,0"
+                    Click="SaveButton_Click"
+                    Background="{DynamicResource ButtonBackground}"
+                    Foreground="{DynamicResource ButtonForeground}"
+                    BorderBrush="{DynamicResource ButtonBorder}"/>
+            <Button x:Name="LogsButton" Content="View Logs" Width="80" Margin="0,0,10,0"
+                    Click="LogsButton_Click"
+                    Background="{DynamicResource ButtonBackground}"
+                    Foreground="{DynamicResource ButtonForeground}"
+                    BorderBrush="{DynamicResource ButtonBorder}"/>
+            <Button x:Name="CloseButton" Content="Close" Width="80" IsCancel="True"
+                    Click="CloseButton_Click"
+                    Background="{DynamicResource ButtonBackground}"
+                    Foreground="{DynamicResource ButtonForeground}"
+                    BorderBrush="{DynamicResource ButtonBorder}"/>
+        </StackPanel>
+    </Grid>
+</Window>
