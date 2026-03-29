@@ -1,0 +1,74 @@
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
+
+namespace ProtankiTool.Listeners
+{
+    public class KeyboardListener : IDisposable
+    {
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+        private LowLevelKeyboardProc _proc;
+        private IntPtr _hookID = IntPtr.Zero;
+        public event Func<Key, bool>? KeyDown;
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string? lpModuleName);
+
+        public KeyboardListener()
+        {
+            _proc = HookCallback;
+            _hookID = SetHook(_proc);
+        }
+
+        public void Dispose()
+        {
+            _ = UnhookWindowsHookEx(_hookID);
+        }
+
+        private static IntPtr SetHook(LowLevelKeyboardProc proc)
+        {
+            using Process curProcess = Process.GetCurrentProcess();
+            using ProcessModule? curModule = curProcess.MainModule;
+
+            return curModule != null ? SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0) : nint.Zero;
+        }
+
+        private const uint LLKHF_INJECTED = 0x10;
+
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && wParam == WM_KEYDOWN && lParam != IntPtr.Zero)
+            {
+                uint flags = (uint)Marshal.ReadInt32(lParam, 8);
+                bool isInjected = (flags & LLKHF_INJECTED) != 0;
+
+                if (!isInjected)
+                {
+                    int vkCode = Marshal.ReadInt32(lParam);
+                    Key key = KeyInterop.KeyFromVirtualKey(vkCode);
+                    bool handled = KeyDown?.Invoke(key) ?? false;
+
+                    if (handled)
+                    {
+                        return 1;
+                    }
+                }
+            }
+
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+    }
+}
