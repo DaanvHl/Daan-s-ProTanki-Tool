@@ -3,16 +3,15 @@ using ProtankiTool.Types;
 using ProtankiTool.Utils;
 using System.ComponentModel;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace ProtankiTool.ViewModels
 {
-    public class PowerupViewModel : INotifyPropertyChanged
+    public class PowerupViewModel : INotifyPropertyChanged, IDisposable
     {
         private AppSettings _settings;
         private Action<PowerupType> _usePowerupAction;
         private Action<PowerupType, double> _saveDelayAction;
-        private DispatcherTimer _timer;
+        private System.Threading.Timer? _timer;
 
         private PowerupType _powerupType;
         public PowerupType PowerupType
@@ -40,7 +39,7 @@ namespace ProtankiTool.ViewModels
                     _delay = value;
                     OnPropertyChanged(nameof(Delay));
                     DelayText = $"{_delay:0}ms";
-                    _timer.Interval = TimeSpan.FromMilliseconds(_delay);
+                    if (_isActive) _timer?.Change((int)_delay, (int)_delay);
                     _saveDelayAction?.Invoke(PowerupType, _delay);
                 }
             }
@@ -88,11 +87,11 @@ namespace ProtankiTool.ViewModels
 
                     if (_isActive)
                     {
-                        _timer.Start();
+                        _timer?.Change(0, (int)_delay);
                     }
                     else
                     {
-                        _timer.Stop();
+                        _timer?.Change(Timeout.Infinite, Timeout.Infinite);
                     }
 
                     OnPropertyChanged(nameof(ButtonContent));
@@ -120,16 +119,17 @@ namespace ProtankiTool.ViewModels
 
             TogglePowerupCommand = new RelayCommand(TogglePowerup);
 
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(_delay)
-            };
-            _timer.Tick += (s, e) => _usePowerupAction?.Invoke(PowerupType);
+            _timer = new System.Threading.Timer(_ => _usePowerupAction?.Invoke(PowerupType), null, Timeout.Infinite, Timeout.Infinite);
         }
 
         private void TogglePowerup(object? parameter)
         {
             IsActive = !IsActive;
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -35,6 +35,7 @@ namespace ProtankiTool.Utils
         {
             LogService.LogInfo("Initializing PowerupUtils.");
 
+            foreach (PowerupViewModel vm in _powerups) vm.Dispose();
             _powerups.Clear();
 
             bool settingsChanged = false;

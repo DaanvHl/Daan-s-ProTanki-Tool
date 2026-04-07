@@ -411,6 +411,9 @@ InitializeNotifyIcon();
                         _powerupUtils.GameProcess = _gameProcess;
                     }
 
+                    // Game found — check less frequently to reduce overhead while in-game
+                    _gameCheckTimer.Interval = TimeSpan.FromSeconds(3);
+
                     EnableAutomation();
                     LogService.LogInfo("Game process found.");
                 }
@@ -424,6 +427,9 @@ InitializeNotifyIcon();
                     {
                         _powerupUtils.GameProcess = null;
                     }
+
+                    // Game lost — poll quickly to detect relaunch
+                    _gameCheckTimer.Interval = TimeSpan.FromMilliseconds(500);
 
                     DisableAutomation();
                     LogService.LogInfo("Game process lost.");
