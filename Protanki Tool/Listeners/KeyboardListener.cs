@@ -45,25 +45,17 @@ namespace ProtankiTool.Listeners
             return curModule != null ? SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0) : nint.Zero;
         }
 
-        private const uint LLKHF_INJECTED = 0x10;
-
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && wParam == WM_KEYDOWN && lParam != IntPtr.Zero)
             {
-                uint flags = (uint)Marshal.ReadInt32(lParam, 8);
-                bool isInjected = (flags & LLKHF_INJECTED) != 0;
+                int vkCode = Marshal.ReadInt32(lParam);
+                Key key = KeyInterop.KeyFromVirtualKey(vkCode);
+                bool handled = KeyDown?.Invoke(key) ?? false;
 
-                if (!isInjected)
+                if (handled)
                 {
-                    int vkCode = Marshal.ReadInt32(lParam);
-                    Key key = KeyInterop.KeyFromVirtualKey(vkCode);
-                    bool handled = KeyDown?.Invoke(key) ?? false;
-
-                    if (handled)
-                    {
-                        return 1;
-                    }
+                    return 1;
                 }
             }
 

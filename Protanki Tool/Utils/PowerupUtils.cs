@@ -12,46 +12,10 @@ namespace ProtankiTool.Utils
 {
     public class PowerupUtils
     {
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
-
-        private const uint INPUT_KEYBOARD = 1;
-        private const uint KEYEVENTF_KEYUP = 0x0002;
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct KEYBDINPUT
-        {
-            public ushort wVk;
-            public ushort wScan;
-            public uint dwFlags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MOUSEINPUT
-        {
-            public int dx;
-            public int dy;
-            public uint mouseData;
-            public uint dwFlags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct InputUnion
-        {
-            [FieldOffset(0)] public MOUSEINPUT mi;
-            [FieldOffset(0)] public KEYBDINPUT ki;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct INPUT
-        {
-            public uint type;
-            public InputUnion U;
-        }
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        private const uint WM_KEYDOWN = 0x0100;
+        private const uint WM_KEYUP = 0x0101;
 
         public AppSettings Settings { get; set; }
         public Process? GameProcess { get; set; }
@@ -211,26 +175,19 @@ namespace ProtankiTool.Utils
 
         private void SendKey(Key key)
         {
+            if (GameProcess?.MainWindowHandle == null || GameProcess.MainWindowHandle == IntPtr.Zero)
+            {
+                return;
+            }
+
             ushort virtualKey = (ushort)KeyInterop.VirtualKeyFromKey(key);
-            ushort scanCode = (ushort)NativeMethods.MapVirtualKey(virtualKey, 0);
+            uint scanCode = NativeMethods.MapVirtualKey(virtualKey, 0);
 
-            INPUT[] inputs = new INPUT[2];
+            IntPtr lParamDown = (IntPtr)((scanCode << 16) | 1);
+            IntPtr lParamUp = (IntPtr)((scanCode << 16) | 0xC0000001);
 
-            inputs[0].type = INPUT_KEYBOARD;
-            inputs[0].U.ki.wVk = virtualKey;
-            inputs[0].U.ki.wScan = scanCode;
-            inputs[0].U.ki.dwFlags = 0;
-            inputs[0].U.ki.time = 0;
-            inputs[0].U.ki.dwExtraInfo = IntPtr.Zero;
-
-            inputs[1].type = INPUT_KEYBOARD;
-            inputs[1].U.ki.wVk = virtualKey;
-            inputs[1].U.ki.wScan = scanCode;
-            inputs[1].U.ki.dwFlags = KEYEVENTF_KEYUP;
-            inputs[1].U.ki.time = 0;
-            inputs[1].U.ki.dwExtraInfo = IntPtr.Zero;
-
-            _ = SendInput(2, inputs, Marshal.SizeOf<INPUT>());
+            _ = PostMessage(GameProcess.MainWindowHandle, WM_KEYDOWN, virtualKey, lParamDown);
+            _ = PostMessage(GameProcess.MainWindowHandle, WM_KEYUP, virtualKey, lParamUp);
         }
     }
 }
