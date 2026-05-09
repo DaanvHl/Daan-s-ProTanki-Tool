@@ -36,10 +36,6 @@ namespace ProtankiTool
         private List<PowerupType> _activePowerupsBeforeChat = [];
         private CancellationTokenSource? _chatResumeCts;
 
-        private bool _isRailgunModeActive = false;
-        private RailgunOverlayWindow? _railgunOverlay;
-        private MouseListener? _mouseListener;
-
         #region Win32
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
@@ -96,18 +92,6 @@ InitializeNotifyIcon();
             _hotkeyActions["RedTeam"] = () => RedTeamButton_Click(this, null);
             _hotkeyActions["BlueTeam"] = () => BlueTeamButton_Click(this, null);
             _hotkeyActions["StartTimer"] = StartGoldBoxTimer;
-            _hotkeyActions["RailgunMode"] = ToggleRailgunMode;
-
-            _railgunOverlay = new RailgunOverlayWindow();
-
-            _mouseListener = new MouseListener();
-            _mouseListener.LeftButtonDown += () =>
-            {
-                if (!_isRailgunModeActive) return;
-                if (_gameProcess == null || !WindowUtils.IsGameWindowInForeground(_gameProcess)) return;
-                if (_arePowerupsPausedForChat) return;
-                _ = Dispatcher.BeginInvoke(ShowRailgunLine);
-            };
         }
 
         private bool KeyboardListener_OnKeyPressed(Key e)
@@ -150,17 +134,12 @@ InitializeNotifyIcon();
                 CloseChatAndResume();
                 return false;
             }
-            else if (e == Key.Space && _isRailgunModeActive && !_arePowerupsPausedForChat)
-            {
-                ShowRailgunLine();
-                return false;
-            }
             else if (_settings.PowerupKeys.ContainsValue(e))
             {
                 PowerupType powerupType = _settings.PowerupKeys.FirstOrDefault(x => x.Value == e).Key;
                 _powerupUtils?.UsePowerup(powerupType);
                 LogService.LogInfo($"Powerup key '{e}' pressed in-game, using {powerupType}.");
-                return false;
+                return true;
             }
 
             return false;
@@ -233,20 +212,6 @@ InitializeNotifyIcon();
             _ = GlobalHotKeyManager.Register(_settings.RedTeamHotKey);
             _ = GlobalHotKeyManager.Register(_settings.BlueTeamHotKey);
             _ = GlobalHotKeyManager.Register(_settings.GoldBoxTimerHotKey);
-            _ = GlobalHotKeyManager.Register(_settings.RailgunModeHotKey);
-
-        }
-
-        private void ToggleRailgunMode()
-        {
-            _isRailgunModeActive = !_isRailgunModeActive;
-            Status = _isRailgunModeActive ? "Railgun Mode: ACTIVE" : "Railgun Mode: OFF";
-            LogService.LogInfo($"Railgun mode toggled: {_isRailgunModeActive}");
-        }
-
-        private void ShowRailgunLine()
-        {
-            _railgunOverlay?.ShowLine();
         }
 
         private void StartGoldBoxTimer()
@@ -614,12 +579,6 @@ InitializeNotifyIcon();
             LaunchGame();
         }
 
-        private void GameDataButton_Click(object sender, RoutedEventArgs e)
-        {
-            GameDataWindow wnd = new() { Owner = this };
-            wnd.ShowDialog();
-        }
-
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             LogService.LogInfo("Settings button clicked.");
@@ -657,10 +616,8 @@ InitializeNotifyIcon();
             _clickerService?.Dispose();
             GlobalHotKeyManager.Shutdown();
             _keyboardListener?.Dispose();
-            _mouseListener?.Dispose();
             _notifyIcon?.Dispose();
             _timerWindow?.Close();
-            _railgunOverlay?.Close();
 
             base.OnClosed(e);
 

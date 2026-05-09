@@ -26,7 +26,6 @@ public class AppSettings
     public HotKey RedTeamHotKey { get; set; } = new(Key.F7, ModifierKeys.None);
     public HotKey BlueTeamHotKey { get; set; } = new(Key.F8, ModifierKeys.None);
     public HotKey GoldBoxTimerHotKey { get; set; } = new(Key.F9, ModifierKeys.None);
-    public HotKey RailgunModeHotKey { get; set; } = new();
     public ThemeType Theme { get; set; } = ThemeType.Dark;
     public string? GameExecutablePath { get; set; } = null;
     public double ClickSpeed { get; set; } = 10;
@@ -48,7 +47,6 @@ public class AppSettings
             ? "RedTeam"
             : hotKey == BlueTeamHotKey ? "BlueTeam"
             : hotKey == GoldBoxTimerHotKey ? "StartTimer"
-            : hotKey == RailgunModeHotKey ? "RailgunMode"
             : null;
     }
 

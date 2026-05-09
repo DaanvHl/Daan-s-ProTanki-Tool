@@ -41,7 +41,6 @@ namespace ProtankiTool
             RedTeamHotKeyBox.HotKey = _settings.RedTeamHotKey;
             BlueTeamHotKeyBox.HotKey = _settings.BlueTeamHotKey;
             GoldBoxTimerHotKeyBox.HotKey = _settings.GoldBoxTimerHotKey;
-            RailgunModeHotKeyBox.HotKey = _settings.RailgunModeHotKey;
             GamePathTextBox.Text = _settings.GameExecutablePath;
 
             RedTeamXTextBox.Text = _settings.RedTeamCoordinates.X.ToString(CultureInfo.InvariantCulture);
@@ -189,7 +188,6 @@ namespace ProtankiTool
             _settings.RedTeamHotKey = RedTeamHotKeyBox.HotKey;
             _settings.BlueTeamHotKey = BlueTeamHotKeyBox.HotKey;
             _settings.GoldBoxTimerHotKey = GoldBoxTimerHotKeyBox.HotKey;
-            _settings.RailgunModeHotKey = RailgunModeHotKeyBox.HotKey;
 
             if (double.TryParse(RedTeamXTextBox.Text, out double rX) && double.TryParse(RedTeamYTextBox.Text, out double rY))
             {
@@ -283,12 +281,6 @@ namespace ProtankiTool
             _ = GlobalHotKeyManager.Register(_settings.RedTeamHotKey);
             _ = GlobalHotKeyManager.Register(_settings.BlueTeamHotKey);
             _ = GlobalHotKeyManager.Register(_settings.GoldBoxTimerHotKey);
-            _ = GlobalHotKeyManager.Register(_settings.RailgunModeHotKey);
-
-            foreach (KeyValuePair<PowerupType, Key> entry in _settings.PowerupKeys)
-            {
-                _ = GlobalHotKeyManager.Register(new HotKey(entry.Value, ModifierKeys.None));
-            }
         }
     }
 }
